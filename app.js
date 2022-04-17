@@ -10,13 +10,8 @@ app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use('/:path', (req, res, next) => {
-  if (req.params.path !== 'cards' && req.params.path !== 'users') {
-    res.status(404).send({
-      message: 'Такой страницы не существует',
-    });
-  }
-  next();
+app.use('*', (req, res) => {
+  res.status(404).send({ message: 'Запрашиваемый ресурс не найден!' });
 });
 
 app.use((req, res, next) => {
