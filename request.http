@@ -55,5 +55,10 @@ DELETE http://localhost:3000/cards/625bf05d84805e7b05d60f6d/likes
 Content-Type: application/json
 
 ###
+
 PATCH http://localhost:3000/404
 Content-Type: application/json
+
+{
+    "avatar": "https://w-ddog.ruscsdcsdcsdc/wallpapers/10/18/464728990985141/priroda-gory-kamni-les.jpg"
+}
