@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use('*', (req, res) => {
+app.use((!('/users') || (!('/cards'))), (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден!' });
 });
 
