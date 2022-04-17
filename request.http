@@ -1,0 +1,55 @@
+GET http://localhost:3000/users/:userId
+
+###
+
+GET http://localhost:3000/users
+
+###
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "name": "Alisa",
+    "about": "Printer",
+    "avatar": "https://w-dog.ru/wallpapers/10/18/464728990985141/priroda-gory-kamni-les.jpg"
+}
+
+###
+
+POST http://localhost:3000/cards
+Content-Type: application/json
+
+{
+    "name": "Alisa",
+    "link": "RTYI"
+}
+
+###
+
+PATCH http://localhost:3000/users/me
+Content-Type: application/json
+
+{
+    "name": "As",
+    "about": "csdcsdcsd"
+}
+
+###
+
+PATCH http://localhost:3000/users/me/avatar
+Content-Type: application/json
+
+{
+    "avatar": "https://w-ddog.ruscsdcsdcsdc/wallpapers/10/18/464728990985141/priroda-gory-kamni-les.jpg"
+}
+
+###
+
+PUT http://localhost:3000/cards/625bf05d84805e7b05d60f6d/likes
+Content-Type: application/json
+
+###
+
+DELETE http://localhost:3000/cards/625bf05d84805e7b05d60f6d/likes
+Content-Type: application/json
