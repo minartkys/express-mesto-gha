@@ -7,9 +7,23 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.deleteCardById = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
-    .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+  Card.findByIdAndRemove(req.params.cardId)
+    .then((card) => {
+      if (!card) {
+        return res.status(404).send({
+          message: 'Карточка не обнаружена',
+        });
+      }
+      return res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(404).send({
+          message: 'Переданы некорректные данные при удалении карточки',
+        });
+      }
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.createCard = (req, res) => {
