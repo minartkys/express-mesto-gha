@@ -16,7 +16,14 @@ module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
-    .then((card) => res.send({ name: card.name, link: card.link }))
+    .then((card) => {
+      if (name.length < 2) {
+        return res.status(400).send({
+          message: 'Переданы некорректные данные при создании пользователя',
+        });
+      }
+      return res.send({ name: card.name, link: card.link, owner: card.owner });
+    })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
