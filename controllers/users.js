@@ -57,11 +57,18 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const { name, about } = req.body;
   const owner = req.user._id;
-  User.findByIdAndUpdate(owner, { name, about, avatar })
+  User.findByIdAndUpdate(
+    owner,
+    { name, about },
+    { new: true, runValidators: true },
+  )
     .then((user) => {
-      if (name.length < 2 || about.length < 2) {
+      if (
+        (name.length < 2 || about.length < 2)
+        && (name.length > 30 || about.length < 30)
+      ) {
         return res.status(400).send({
           message: 'Переданы некорректные данные при создании пользователя',
         });

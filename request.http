@@ -30,8 +30,8 @@ PATCH http://localhost:3000/users/me
 Content-Type: application/json
 
 {
-    "name": "Ae",
-    "about": "csdcsdcsd"
+    "name": "dss",
+    "about": "sss"
 }
 
 ###
