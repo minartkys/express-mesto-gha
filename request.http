@@ -45,7 +45,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:3000/cards/625bf05d84805e7b05d60f6d/likes
+PUT http://localhost:3000/cards/61eade4c6d5acf558c42d9b8/likes
 Content-Type: application/json
 
 ###
