@@ -2,20 +2,29 @@
 const User = require('../models/user');
 
 module.exports.getUserById = (req, res) => {
+  if (req.params.userId.length !== 24) {
+    return res.status(400).send({
+      message: 'Передан некорректный ID пользователя',
+    });
+  }
   User.findById(req.params.userId)
     .then((user) => {
-      if (user.data !== null) {
-        res.send(user);
-      } else {
-        res
-          .status(404)
-          .send({ message: 'Пользователя с данным id нет в БД' });
+      if (!user) {
+        return res.status(404).send({
+          message: 'Пользователь не обнаружен',
+        });
       }
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан невалидный id' });
-      } else res.status(500).send({ message: 'Произошла ошибка' });
+        return res.status(404).send({
+          message: 'Пользователь не обнаружен',
+        });
+      }
+      return res.status(500).send({
+        message: 'Произошла ошибка',
+      });
     });
 };
 

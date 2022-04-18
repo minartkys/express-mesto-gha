@@ -1,5 +1,4 @@
-GET http://localhost:3000/users/test
-
+GET http://localhost:3000/users/625bef776cc262048d7b37fk
 ###
 
 GET http://localhost:3000/users
