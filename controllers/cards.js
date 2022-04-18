@@ -66,12 +66,39 @@ module.exports.putLike = (req, res) => {
     });
 };
 
+// eslint-disable-next-line consistent-return
 module.exports.deleteLike = (req, res) => {
+  if (req.params.cardId.length !== 24) {
+    return res.status(400).send({
+      message: 'Передан некорректный ID карточки',
+    });
+  }
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .then((card) => {
+      if (!card) {
+        return res.status(404).send({
+          message: 'Карточка не обнаружена',
+        });
+      }
+      return res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({
+          message: 'Передан некорректный ID карточки',
+        });
+      }
+      if (err.name === 'CastError') {
+        return res.status(404).send({
+          message: 'Карточка не обнаружена',
+        });
+      }
+      return res.status(500).send({
+        message: 'Произошла ошибка',
+      });
+    });
 };
