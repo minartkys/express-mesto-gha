@@ -44,13 +44,15 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:3000/cards
+###
 
 PUT http://localhost:3000/cards//likes
 Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/cards/625bf05d84805e7b05d60f6d/likes
+DELETE http://localhost:3000/cards/61eade4c6d5acf558c42d9b8
 Content-Type: application/json
 
 ###
