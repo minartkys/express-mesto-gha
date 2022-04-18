@@ -1,6 +1,7 @@
 /* eslint-disable no-shadow */
 const User = require('../models/user');
 
+// eslint-disable-next-line consistent-return
 module.exports.getUserById = (req, res) => {
   if (req.params.userId.length !== 24) {
     return res.status(400).send({
