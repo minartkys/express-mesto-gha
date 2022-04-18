@@ -6,6 +6,10 @@ module.exports.getUserById = (req, res) => {
     .then((user) => {
       if (user.data !== null) {
         res.send(user);
+      } else {
+        res
+          .status(404)
+          .send({ message: 'Пользователя с данным id нет в БД' });
       }
     })
     .catch((err) => {
