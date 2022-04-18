@@ -17,7 +17,7 @@ module.exports.createCard = (req, res) => {
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then((card) => {
-      res.send({ name: card.name, link: card.link, id: card.owner });
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -31,7 +31,7 @@ module.exports.createCard = (req, res) => {
 
 // eslint-disable-next-line consistent-return
 module.exports.putLike = (req, res) => {
-  if (req.params.cardId !== 24) {
+  if (req.params.cardId.length !== 24) {
     return res.status(400).send({
       message: 'Передан некорректный ID карточки',
     });
