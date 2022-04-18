@@ -2,14 +2,14 @@
 const User = require('../models/user');
 
 module.exports.getUserById = (req, res) => {
-  User.findById(req.user._id)
+  User.findById(req.params.id)
     .then((user) => {
       if (!user) {
         return res.status(400).send({
           message: 'Пользователь по указанному _id не найден. ',
         });
       }
-      return res.send({ data: user });
+      return res.send(user);
     })
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
