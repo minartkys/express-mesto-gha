@@ -57,9 +57,9 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateUser = (req, res) => {
-  const { name, about } = req.body;
+  const { name, about, avatar } = req.body;
   const owner = req.user._id;
-  User.findByIdAndUpdate(owner, { name, about })
+  User.findByIdAndUpdate(owner, { name, about, avatar })
     .then((user) => {
       if (name.length < 2 || about.length < 2) {
         return res.status(400).send({
