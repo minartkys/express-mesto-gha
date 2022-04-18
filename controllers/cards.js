@@ -17,14 +17,16 @@ module.exports.createCard = (req, res) => {
   const owner = req.user._id;
   Card.create({ name, link, owner })
     .then((card) => {
-      if (name.length < 2) {
+      res.send({ name: card.name, link: card.link, id: card.owner });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({
-          message: 'Переданы некорректные данные при создании пользователя',
+          message: 'Переданы некорректные данные при создании карточки',
         });
       }
-      return res.send({ name: card.name, link: card.link, owner: card.owner });
-    })
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+      return res.status(500).send({ message: 'Произошла ошибка' });
+    });
 };
 
 module.exports.putLike = (req, res) => {

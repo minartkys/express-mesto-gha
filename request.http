@@ -20,7 +20,7 @@ POST http://localhost:3000/cards
 Content-Type: application/json
 
 {
-    "name": "Aa",
+    "name": "kу",
     "link": "RTYI"
 }
 
