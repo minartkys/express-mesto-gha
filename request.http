@@ -1,4 +1,4 @@
-GET http://localhost:3000/users/text
+GET http://localhost:3000/users/test
 
 ###
 
@@ -10,7 +10,7 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-    "name": "A",
+    "name": "As",
     "about": "Printer",
     "avatar": "https://w-dog.ru/wallpapers/10/18/464728990985141/priroda-gory-kamni-les.jpg"
 }
