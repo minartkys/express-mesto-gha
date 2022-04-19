@@ -70,8 +70,8 @@ module.exports.putLike = (req, res) => {
         });
       }
       if (err.name === 'CastError') {
-        return res.status(404).send({
-          message: 'Карточка не обнаружена',
+        return res.status(400).send({
+          message: 'Передан некорректный ID карточки',
         });
       }
       return res.status(500).send({
@@ -107,8 +107,8 @@ module.exports.deleteLike = (req, res) => {
         });
       }
       if (err.name === 'CastError') {
-        return res.status(404).send({
-          message: 'Карточка не обнаружена',
+        return res.status(400).send({
+          message: 'Передан некорректный ID карточки',
         });
       }
       return res.status(500).send({
