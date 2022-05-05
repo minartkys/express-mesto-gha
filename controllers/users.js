@@ -39,41 +39,22 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  if (!email || !password) {
-    return res
-      .status(BadRequestError)
-      .send({ message: 'Поля email и password обязательны' });
-  }
-  return bcrypt
-    .hash(req.body.password, 10)
-    .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email: req.body.email,
-      password: hash,
-    }))
-    .then((user) => {
-      res.status(200).send({
-        id: user._id,
-        email: user.email,
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      });
+  bcrypt.hash(password, 10).then((hash) => {
+    User.create({
+      name, about, avatar, email, password: hash,
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Ошибка валидации.'));
-      } else if (err.code === 11000) {
-        next(
-          new ConflictingRequestError(
-            'Пользователь с таким email уже существует.',
-          ),
-        );
-      }
-      next(err);
-    });
+      .then((user) => User.findById(user._id)).then((user) => {
+        res.status(200).send({ data: user });
+      }).catch((err) => {
+        if (err.name === 'ValidationError') {
+          next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+        }
+        if (err.code === 11000) {
+          next(new ConflictingRequestError('email существует в базе данных'));
+        }
+        next(err);
+      });
+  }).catch(next);
 };
 
 module.exports.updateUser = (req, res) => {
