@@ -36,7 +36,14 @@ module.exports.getUsers = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  if (!email || !password) {
+    return res
+      .status(BadRequestError)
+      .send({ message: 'Поля email и password обязательны' });
+  }
   return bcrypt
     .hash(req.body.password, 10)
     .then((hash) => User.create({
