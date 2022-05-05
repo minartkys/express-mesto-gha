@@ -11,8 +11,10 @@ Content-Type: application/json
 {
     "name": "As",
     "about": "Printer",
-    "avatar": "https://w-dog.ru/wallpapers/10/18/464728990985141/priroda-gory-kamni-les.jpg"
-}
+    "avatar": "https://w-dog.ru/wallpapers/10/18/464728990985141/priroda-gory-kamni-les.jpg",
+    "password": "123123123",
+    "email": "madashd@mail.ru"
+    }
 
 ###
 

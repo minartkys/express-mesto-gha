@@ -6,7 +6,7 @@ const User = require('../models/user');
 const AuthorizationError = require('../errors/UnauthorizedError');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
-
+const ConflictingRequestError = require('../errors/ConflictingRequestError');
 // eslint-disable-next-line consistent-return
 module.exports.getUserById = (req, res) => {
   if (req.params.userId.length !== 24) {
@@ -35,7 +35,7 @@ module.exports.getUsers = (req, res) => {
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -54,20 +54,25 @@ module.exports.createUser = (req, res) => {
       password: hash,
     }))
     .then((user) => {
-      if (name.length < 2 || about.length < 2) {
-        throw new NotFoundError(
-          'Переданы некорректные данные при создании пользователя',
-        );
-      }
-      return res.send(user);
+      res.status(200).send({
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(
-          'Переданы некорректные данные при создании пользователя',
+        next(new BadRequestError('Ошибка валидации.'));
+      } else if (err.code === 11000) {
+        next(
+          new ConflictingRequestError(
+            'Пользователь с таким email уже существует.',
+          ),
         );
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
