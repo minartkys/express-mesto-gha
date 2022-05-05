@@ -44,7 +44,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/cards
+GET http://localhost:3000/users/me
 ###
 
 PUT http://localhost:3000/cards//likes
