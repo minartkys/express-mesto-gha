@@ -104,10 +104,14 @@ module.exports.updateUser = (req, res, next) => {
     });
 };
 
-module.exports.updateAvatar = (req, res, next) => {
+module.exports.patchMeAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  const owner = req.user._id;
-  User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar },
+    { new: true, runValidators: true },
+  )
     .then((user) => {
       if (!user) {
         return next(
@@ -118,11 +122,13 @@ module.exports.updateAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(
-          'Переданы некорректные данные при создании пользователя',
+        return next(
+          new BadRequestError(
+            'Переданы некорректные данные при обновлении пользователя',
+          ),
         );
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      return next(err);
     });
 };
 
