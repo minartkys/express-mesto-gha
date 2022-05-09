@@ -18,13 +18,13 @@ module.exports.deleteCardById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(
+        return next(
           new BadRequestError(
             'Переданы некорректные данные при удалении карточки',
           ),
         );
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -37,9 +37,11 @@ module.exports.createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные карточки'));
+        return next(
+          new BadRequestError('Переданы некорректные данные карточки'),
+        );
       }
-      next(err);
+      return next(err);
     });
 };
 
