@@ -104,11 +104,18 @@ module.exports.updateUser = (req, res, next) => {
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   const owner = req.user._id;
   User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        return next(
+          new NotFoundError('Пользователь по указанному _id не найден.'),
+        );
+      }
+      return res.send({ data: user });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError(
