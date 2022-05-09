@@ -1,3 +1,5 @@
+const { Error } = require('mongoose');
+
 class ConflictingRequestError extends Error {
   constructor(message) {
     super(message);
