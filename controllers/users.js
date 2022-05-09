@@ -8,24 +8,21 @@ const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictingRequestError = require('../errors/ConflictingRequestError');
 // eslint-disable-next-line consistent-return
-module.exports.getUserById = (req, res) => {
-  if (req.params.userId.length !== 24) {
-    throw new NotFoundError('Передан некорректный ID пользователя');
-  }
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Передан некорректный ID пользователя');
+      if (user === null) {
+        throw new NotFoundError('Пользователь по указанному _id не найден.');
       }
-      return res.send(user);
+      res.status(200).send({
+        data: user,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Передан некорректный ID пользователя');
+        next(new BadRequestError('Пользователь по указанному _id не найден.'));
       }
-      return res.status(500).send({
-        message: 'Произошла ошибка',
-      });
+      next(err);
     });
 };
 
@@ -117,15 +114,18 @@ module.exports.updateAvatar = (req, res) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  return User.findUserByCredentials(email, password).then((user) => {
-    const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-    res.cookie('jwt', token, {
-      maxAge: 3600000,
-      httpOnly: true,
-      sameSite: true,
-    });
-    res.status(200).send({ token });
-  })
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+        expiresIn: '7d',
+      });
+      res.cookie('jwt', token, {
+        maxAge: 3600000,
+        httpOnly: true,
+        sameSite: true,
+      });
+      res.status(200).send({ token });
+    })
     .catch((err) => {
       next(new AuthorizationError(err.message));
     });
