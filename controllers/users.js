@@ -81,14 +81,24 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { new: true, runValidators: true },
+  )
     .then((user) => {
-      if (user === null) { throw new NotFoundError('Пользователь с указанным _id не найден.'); }
+      if (user === null) {
+        throw new NotFoundError('Пользователь с указанным _id не найден.');
+      }
       res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при обновлении профиля.',
+          ),
+        );
       }
       next(err);
     });
@@ -132,14 +142,10 @@ module.exports.login = (req, res, next) => {
 module.exports.getUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
-      if (!user) {
-        return next(
-          new NotFoundError(
-            'GET /users/me Пользователь по указанному _id не найден.',
-          ),
-        );
+      if (!user._id) {
+        throw new NotFoundError('Пользователь с указанным _id не найден.');
       }
-      return res.status(200).send(user);
+      res.status(200).send(user);
     })
-    .catch((err) => next(err));
+    .catch(next);
 };
