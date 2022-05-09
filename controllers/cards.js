@@ -1,32 +1,34 @@
 const Card = require('../models/card');
+const NotFoundError = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(next);
 };
 
-module.exports.deleteCardById = (req, res) => {
+module.exports.deleteCardById = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        return res.status(404).send({
-          message: 'Карточка не обнаружена',
-        });
+        throw new NotFoundError('Карточка с указанным _id не найдена.');
       }
       return res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({
-          message: 'Переданы некорректные данные при удалении карточки',
-        });
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при удалении карточки',
+          ),
+        );
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
   Card.create({ name, link, owner })
@@ -35,21 +37,13 @@ module.exports.createCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({
-          message: 'Переданы некорректные данные при создании карточки',
-        });
+        next(new BadRequestError('Переданы некорректные данные карточки'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
-// eslint-disable-next-line consistent-return
-module.exports.putLike = (req, res) => {
-  if (req.params.cardId.length !== 24) {
-    return res.status(400).send({
-      message: 'Передан некорректный ID карточки',
-    });
-  }
+module.exports.putLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
@@ -57,36 +51,23 @@ module.exports.putLike = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({
-          message: 'Карточка не обнаружена',
-        });
+        throw new NotFoundError('Карточка не обнаружена');
       }
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({
-          message: 'Передан некорректный ID карточки',
-        });
-      }
       if (err.name === 'CastError') {
-        return res.status(400).send({
-          message: 'Передан некорректный ID карточки',
-        });
+        return next(
+          new BadRequestError(
+            'Переданы некорректные данные для изменения лайка.',
+          ),
+        );
       }
-      return res.status(500).send({
-        message: 'Произошла ошибка',
-      });
+      return next(err);
     });
 };
 
-// eslint-disable-next-line consistent-return
-module.exports.deleteLike = (req, res) => {
-  if (req.params.cardId.length !== 24) {
-    return res.status(400).send({
-      message: 'Передан некорректный ID карточки',
-    });
-  }
+module.exports.deleteLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } }, // убрать _id из массива
@@ -94,25 +75,18 @@ module.exports.deleteLike = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(404).send({
-          message: 'Карточка не обнаружена',
-        });
+        throw new NotFoundError('Карточка не обнаружена');
       }
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({
-          message: 'Передан некорректный ID карточки',
-        });
-      }
       if (err.name === 'CastError') {
-        return res.status(400).send({
-          message: 'Передан некорректный ID карточки',
-        });
+        return next(
+          new BadRequestError(
+            'Переданы некорректные данные для изменения лайка.',
+          ),
+        );
       }
-      return res.status(500).send({
-        message: 'Произошла ошибка',
-      });
+      return next(err);
     });
 };
