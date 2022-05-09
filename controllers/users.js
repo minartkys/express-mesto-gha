@@ -104,7 +104,7 @@ module.exports.updateUser = (req, res, next) => {
     });
 };
 
-module.exports.patchMeAvatar = (req, res, next) => {
+module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(
