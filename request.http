@@ -22,8 +22,8 @@ POST http://localhost:3000/signin
 Content-Type: application/json
 
 {
-    "email": "madashd@mail.ru",
-    "password": "123123123"
+    "email": "madad@mail.ru",
+    "password": "1223123"
     }
 
 ###
