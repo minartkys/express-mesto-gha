@@ -5,6 +5,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
 const error = require('./middlewares/error');
 const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
 
 const AVATAR_REGEX = /^https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
 const { PORT = 3000 } = process.env;
@@ -12,6 +13,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 app.use(bodyParser.json());
+app.use(express.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -45,11 +47,12 @@ app.post(
   }),
   createUser,
 );
+app.use(auth);
 
-app.use(require('./routes/users'));
-app.use(require('./routes/cards'));
+app.use('/', require('./routes/users'));
+app.use('/', require('./routes/cards'));
 
-app.use('*', (req, res, next) => next(new NotFoundError('404 Not Found')));
+app.use('*', auth, (req, res, next) => next(new NotFoundError('404 Not Found')));
 
 app.use(errors());
 app.use(error);
