@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const auth = require('../middlewares/auth');
 
 const {
   getCards,
@@ -10,10 +9,9 @@ const {
   deleteLike,
 } = require('../controllers/cards');
 
-router.get('/cards', auth, getCards);
+router.get('/cards', getCards);
 router.delete(
   '/cards/:cardId',
-  auth,
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().length(24).hex(),
@@ -24,7 +22,6 @@ router.delete(
 
 router.post(
   '/cards',
-  auth,
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().required().min(2).max(30),
@@ -39,7 +36,6 @@ router.post(
 );
 router.put(
   '/cards/:cardId/likes',
-  auth,
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().length(24).hex(),
@@ -49,7 +45,6 @@ router.put(
 );
 router.delete(
   '/cards/:cardId/likes',
-  auth,
   celebrate({
     params: Joi.object().keys({
       cardId: Joi.string().length(24).hex(),
