@@ -119,11 +119,8 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      res.send({
-        token: jwt.sign({ _id: user._id }, 'super-strong-secret', {
-          expiresIn: '7d',
-        }),
-      });
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      res.status(200).send({ token });
     })
     .catch(() => {
       next(new AuthorizationError('Неправильные почта или пароль.'));

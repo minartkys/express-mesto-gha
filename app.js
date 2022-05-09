@@ -5,6 +5,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
 const error = require('./middlewares/error');
 const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
 
 const AVATAR_REGEX = /^https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
 const { PORT = 3000 } = process.env;
@@ -46,18 +47,14 @@ app.post(
   createUser,
 );
 
-app.use('/', require('./routes/users'));
-app.use('/', require('./routes/cards'));
+app.use(require('./routes/users'));
+app.use(require('./routes/cards'));
 
-app.use('*', (req, res, next) => {
-  try {
-    throw new NotFoundError('Страница не найдена');
-  } catch (err) {
-    next(err);
-  }
-});
+app.use('*', auth, (req, res, next) => next(new NotFoundError('404 Not Found')));
+
 app.use(errors());
 app.use(error);
+
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   // eslint-disable-next-line no-console
