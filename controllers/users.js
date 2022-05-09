@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 
-const AuthorizationError = require('../errors/UnauthorizedError');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictingRequestError = require('../errors/ConflictingRequestError');
@@ -127,16 +126,14 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
         expiresIn: '7d',
       });
-      res.cookie('jwt', token, {
-        maxAge: 3600000,
-        httpOnly: true,
-        sameSite: true,
-      });
-      res.status(200).send({ token });
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+        })
+        .end();
     })
-    .catch((err) => {
-      next(new AuthorizationError(err.message));
-    });
+    .catch(next);
 };
 
 module.exports.getUserMe = (req, res, next) => {
