@@ -79,32 +79,18 @@ module.exports.createUser = (req, res, next) => {
     });
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   const { name, about } = req.body;
-  const owner = req.user._id;
-  User.findByIdAndUpdate(
-    owner,
-    { name, about },
-    { new: true, runValidators: true },
-  )
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      if (
-        (name.length < 2 || about.length < 2)
-        && (name.length > 30 || about.length < 30)
-      ) {
-        throw new BadRequestError(
-          'Переданы некорректные данные при создании пользователя',
-        );
-      }
-      return res.send(user);
+      if (user === null) { throw new NotFoundError('Пользователь с указанным _id не найден.'); }
+      res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError(
-          'Переданы некорректные данные при создании пользователя',
-        );
+        next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
       }
-      return res.status(500).send({ message: 'Произошла ошибка' });
+      next(err);
     });
 };
 
