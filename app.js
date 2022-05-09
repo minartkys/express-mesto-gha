@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
-const auth = require('./middlewares/auth');
 const error = require('./middlewares/error');
+const NotFoundError = require('./errors/NotFoundError');
 
 const AVATAR_REGEX = /^https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
 const { PORT = 3000 } = process.env;
@@ -19,7 +19,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.post(
   '/signin',
-  auth,
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
@@ -50,8 +49,12 @@ app.post(
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
 
-app.use('*', auth, (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден!' });
+app.use('*', (req, res, next) => {
+  try {
+    throw new NotFoundError('Страница не найдена');
+  } catch (err) {
+    next(err);
+  }
 });
 app.use(errors());
 app.use(error);
