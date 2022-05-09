@@ -10,19 +10,31 @@ const ConflictingRequestError = require('../errors/ConflictingRequestError');
 // eslint-disable-next-line consistent-return
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
+    .orFail(() => {
+      next(
+        new NotFoundError(
+          '_id Ошибка. Пользователь не найден, попробуйте еще раз',
+        ),
+      );
+    })
     .then((user) => {
-      if (user === null) {
-        throw new NotFoundError('Пользователь по указанному _id не найден.');
+      if (user) {
+        res.send(user);
+      } else {
+        throw new NotFoundError(
+          '_id Ошибка. Пользователь не найден, попробуйте еще раз',
+        );
       }
-      res.status(200).send({
-        data: user,
-      });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Пользователь по указанному _id не найден.'));
+        return next(
+          new BadRequestError(
+            `_id Ошибка. ${req.params} Введен некорректный id пользователя`,
+          ),
+        );
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -135,9 +147,13 @@ module.exports.getUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не обнаружен');
+        return next(
+          new NotFoundError(
+            'GET /users/me Пользователь по указанному _id не найден.',
+          ),
+        );
       }
-      return res.send(user);
+      return res.status(200).send(user);
     })
     .catch((err) => next(err));
 };
