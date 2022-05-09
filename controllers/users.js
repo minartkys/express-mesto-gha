@@ -39,22 +39,32 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  bcrypt.hash(password, 10).then((hash) => {
-    User.create({
-      name, about, avatar, email, password: hash,
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => {
+      User.create({
+        name,
+        about,
+        avatar,
+        email,
+        password: hash,
+      })
+        .then((user) => User.findById(user._id))
+        .then((user) => {
+          res.status(200).send({ data: user });
+        })
+        .catch((err) => {
+          if (err.name === 'ValidationError') {
+            throw new BadRequestError(
+              'Переданы некорректные данные при создании пользователя.',
+            );
+          }
+          if (err.code === 11000) {
+            throw new ConflictingRequestError('email существует в базе данных');
+          }
+        });
     })
-      .then((user) => User.findById(user._id)).then((user) => {
-        res.status(200).send({ data: user });
-      }).catch((err) => {
-        if (err.name === 'ValidationError') {
-          next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
-        }
-        if (err.code === 11000) {
-          next(new ConflictingRequestError('email существует в базе данных'));
-        }
-        next(err);
-      });
-  }).catch(next);
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.updateUser = (req, res) => {
