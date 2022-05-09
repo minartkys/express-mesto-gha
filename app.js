@@ -48,7 +48,7 @@ app.post(
 app.use('/', auth, require('./routes/users'));
 app.use('/', auth, require('./routes/cards'));
 
-app.use(auth, (req, res) => {
+app.use('*', auth, (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден!' });
 });
 app.use(errors());
