@@ -45,14 +45,14 @@ app.post(
   createUser,
 );
 
-app.use(errors());
-app.use(auth);
 app.use('/', auth, require('./routes/users'));
 app.use('/', auth, require('./routes/cards'));
 
-app.use('/*', (req, res) => {
+app.use(auth, (req, res) => {
   res.status(404).send({ message: 'Запрашиваемый ресурс не найден!' });
 });
+app.use(errors());
+
 app.listen(PORT, () => {
   // Если всё работает, консоль покажет, какой порт приложение слушает
   // eslint-disable-next-line no-console

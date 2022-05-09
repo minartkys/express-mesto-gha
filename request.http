@@ -1,7 +1,7 @@
 GET http://localhost:3000/users/625bef776cc262048d7b37fk
 ###
 
-GET http://localhost:3000/users
+GET http://localhost:3000/users/me
 
 ###
 
@@ -12,8 +12,8 @@ Content-Type: application/json
     "name": "As",
     "about": "Printer",
     "avatar": "https://w-dog.ru/wallpapers/10/18/464728990985141/priroda-gory-kamni-les.jpg",
-    "password": "123123123",
-    "email": "madashd@mail.ru"
+    "email": "madashd@mail.ru",
+    "password": "123123123"
     }
 
 ###
@@ -32,7 +32,7 @@ PATCH http://localhost:3000/users/me
 Content-Type: application/json
 
 {
-    "name": "dss",
+    "name": "dn",
     "about": "sss"
 }
 
