@@ -130,9 +130,7 @@ module.exports.login = (req, res, next) => {
       });
       res.send({ token });
     })
-    .catch(() => {
-      next(new AuthorizationError('Неправильные почта или пароль.'));
-    });
+    .catch(() => next(new AuthorizationError('Неправильные почта или пароль.')));
 };
 
 module.exports.getUserMe = (req, res, next) => {
