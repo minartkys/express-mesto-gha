@@ -7,34 +7,22 @@ const AuthorizationError = require('../errors/UnauthorizedError');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictingRequestError = require('../errors/ConflictingRequestError');
-// eslint-disable-next-line consistent-return
+
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(() => {
-      next(
-        new NotFoundError(
-          '_id Ошибка. Пользователь не найден, попробуйте еще раз',
-        ),
-      );
-    })
     .then((user) => {
-      if (user) {
-        res.send(user);
-      } else {
-        throw new NotFoundError(
-          '_id Ошибка. Пользователь не найден, попробуйте еще раз',
-        );
+      if (user === null) {
+        throw new NotFoundError('Пользователь по указанному _id не найден.');
       }
+      res.status(200).send({
+        data: user,
+      });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return next(
-          new BadRequestError(
-            `_id Ошибка. ${req.params} Введен некорректный id пользователя`,
-          ),
-        );
+        next(new BadRequestError('Пользователь по указанному _id не найден.'));
       }
-      return next(err);
+      next(err);
     });
 };
 
