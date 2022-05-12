@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/minartkys/express-mesto-gha#readme",
   "devDependencies": {
-    "eslint": "^8.13.0",
+    "eslint": "^8.15.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "nodemon": "^2.0.15"
@@ -28,10 +28,13 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "celebrate": "^15.0.1",
+    "cors": "^2.8.5",
     "express": "^4.17.3",
+    "express-winston": "^4.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.0",
     "mongoose-unique-validator": "^3.0.0",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "winston": "^3.7.2"
   }
 }
