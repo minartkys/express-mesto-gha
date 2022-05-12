@@ -14,19 +14,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(
-  cors({
-    origin: [
-      'http://domainname.students.nomoredomains.xyz',
-      'https://domainname.students.nomoredomains.xyz',
-      'http://api.domainname.minartkys.nomoredomains.xyz',
-      'https://api.domainname.minartkys.nomoredomains.xyz',
-      'http://localhost:3000',
-      'http://localhost:3001',
-    ],
-    credentials: true,
-  }),
-);
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(express.json());
