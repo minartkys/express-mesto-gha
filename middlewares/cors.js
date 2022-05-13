@@ -1,6 +1,6 @@
 const allowedCors = [
-  'http://api.domainname.minartkys.nomoredomains.xyz',
-  'https://api.domainname.minartkys.nomoredomains.xyz',
+  'http://domainname.students.nomoredomains.xyz',
+  'https://domainname.students.nomoredomains.xyz',
 ];
 // eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
