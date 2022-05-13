@@ -10,7 +10,7 @@ const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const AVATAR_REGEX = /^https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
 app.use(bodyParser.json());
@@ -21,9 +21,9 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 app.use(requestLogger);
 const allowedCors = [
-  'https://api.domainname.minartkys.nomoredomains.xyz/',
-  'http://api.domainname.minartkys.nomoredomains.xyz/',
   'http://localhost:3000',
+  'https://domainname.students.nomoredomains.xyz',
+  'http://api.domainname.minartkys.nomoredomains.xyz/',
 ];
 app.use(
   cors({
@@ -58,9 +58,10 @@ app.post(
   }),
   createUser,
 );
-app.use(auth);
 
 app.use('/', require('./routes/users'));
+
+app.use(auth);
 app.use('/', require('./routes/cards'));
 
 app.use('*', (req, res, next) => next(new NotFoundError('404 Not Found')));

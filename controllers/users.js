@@ -8,6 +8,17 @@ const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictingRequestError = require('../errors/ConflictingRequestError');
 
+module.exports.getUserMe = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (user) {
+        res.status(200).send(user);
+      }
+      return next(new NotFoundError('Пользователь с указанным _id не найден.'));
+    })
+    .catch(next);
+};
+
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
@@ -131,15 +142,4 @@ module.exports.login = (req, res, next) => {
       res.send({ token });
     })
     .catch(() => next(new AuthorizationError('Неправильные почта или пароль.')));
-};
-
-module.exports.getUserMe = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (user) {
-        res.status(200).send(user);
-      }
-      return next(new NotFoundError('Пользователь с указанным _id не найден.'));
-    })
-    .catch(next);
 };
