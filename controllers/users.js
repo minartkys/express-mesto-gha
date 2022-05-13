@@ -20,22 +20,23 @@ module.exports.getUserMe = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
+  const userId = req.user._id;
+  User.findById(userId)
     .then((user) => {
-      if (user === null) {
+      if (!user) {
         throw new NotFoundError('Пользователь по указанному _id не найден.');
       }
-      res.status(200).send({
-        data: user,
-      });
+      return res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Пользователь по указанному _id не найден.'));
+      if (err.kind === 'ObjectId') {
+        throw new BadRequestError('Неправильный формат id');
+      } else {
+        next(err);
       }
-      next(err);
-    });
-};
+    })
+    .catch(next);
+};;
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -57,7 +58,7 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
     }))
 
-    .then((user) => User.findById(user._id))
+    .then((user) => User.findById(user.id))
     .then((user) => {
       res.status(200).send({ data: user });
     })
