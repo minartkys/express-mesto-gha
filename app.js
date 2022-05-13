@@ -1,16 +1,16 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
 const error = require('./middlewares/error');
 const NotFoundError = require('./errors/NotFoundError');
-const cors = require('./middlewares/cors');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const AVATAR_REGEX = /^https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
 app.use(bodyParser.json());
@@ -20,8 +20,16 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
 });
 app.use(requestLogger);
-app.use(cors);
-
+const allowedCors = [
+  'https://api.domainname.minartkys.nomoredomains.xyz/',
+  'http://api.domainname.minartkys.nomoredomains.xyz/',
+  'http://localhost:3000',
+];
+app.use(
+  cors({
+    origin: allowedCors,
+  }),
+);
 app.post(
   '/signin',
   celebrate({
