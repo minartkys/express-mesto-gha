@@ -9,6 +9,7 @@ const {
 } = require('../controllers/users');
 
 router.get('/users', getUsers);
+router.get('/users/me', getUserMe);
 router.get(
   '/users/:userId',
   celebrate({
@@ -18,7 +19,6 @@ router.get(
   }),
   getUserById,
 );
-router.get('/users/me', getUserMe);
 
 router.patch(
   '/users/me',
