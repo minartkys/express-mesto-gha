@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
@@ -11,7 +12,7 @@ const AVATAR_REGEX = /^https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*
 const { PORT = 3000 } = process.env;
 
 const app = express();
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
