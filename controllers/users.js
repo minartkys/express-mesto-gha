@@ -36,7 +36,7 @@ module.exports.getUserById = (req, res, next) => {
       }
     })
     .catch(next);
-};;
+};
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})

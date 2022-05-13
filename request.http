@@ -1,8 +1,9 @@
-GET http://localhost:3001/users/GET http://localhost:3001/users/625bef776cc262048d7b37fk
+GET http://localhost:3001/users/
 
 ###
 
-GET http://localhost:3001/users/me
+GET http://localhost:3001/user/me
+
 
 ###
 
