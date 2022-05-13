@@ -10,7 +10,7 @@ const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const AVATAR_REGEX = /^https?:\/\/(www\.)?[a-zA-Z\d-]+\.[\w\d\-.~:/?#[\]@!$&'()*+,;=]{2,}#?$/;
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
 app.use(bodyParser.json());
@@ -21,7 +21,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 app.use(requestLogger);
 const allowedCors = [
-  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3001',
   'https://domainname.students.nomoredomains.xyz',
   'http://domainname.minartkys.nomoredomains.xyz/',
 ];
