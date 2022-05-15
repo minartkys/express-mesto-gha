@@ -41,7 +41,7 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch(next);
 };
 
@@ -61,7 +61,7 @@ module.exports.createUser = (req, res, next) => {
 
     .then((user) => User.findById(user.id))
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -146,7 +146,7 @@ module.exports.login = (req, res, next) => {
           expiresIn: '7d',
         },
       );
-      res.send(token);
+      res.send({ token });
     })
     .catch(() => next(new AuthorizationError('Неправильные почта или пароль.')));
 };
