@@ -8,6 +8,8 @@ const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictingRequestError = require('../errors/ConflictingRequestError');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 module.exports.getUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
@@ -89,7 +91,7 @@ module.exports.updateUser = (req, res, next) => {
       if (user === null) {
         throw new NotFoundError('Пользователь с указанным _id не найден.');
       }
-      res.status(200).send({ data: user });
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -117,7 +119,7 @@ module.exports.updateAvatar = (req, res, next) => {
           new NotFoundError('Пользователь по указанному _id не найден.'),
         );
       }
-      return res.send({ data: user });
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -136,9 +138,14 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-        expiresIn: '7d',
-      });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'the-secret-key',
+
+        {
+          expiresIn: '7d',
+        },
+      );
       res.send({ token });
     })
     .catch(() => next(new AuthorizationError('Неправильные почта или пароль.')));

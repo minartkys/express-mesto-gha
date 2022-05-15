@@ -22,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(requestLogger);
 const allowedCors = [
   'http://localhost:3001',
-  'http://localhost:3001',
+  'http://localhost:3000',
   'https://domainname.students.nomoredomains.xyz',
   'https://domainname.minartkys.nomoredomains.xyz/',
   'https://domainname.minartkys.nomoredomains.xyz',
@@ -47,7 +47,7 @@ app.post(
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
+      password: Joi.string().required(),
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().custom((value, helpers) => {

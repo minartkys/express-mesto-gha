@@ -10,7 +10,7 @@ module.exports.getCards = (req, res, next) => {
 };
 
 module.exports.deleteCardById = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка с указанным _id не найдена.');
@@ -18,7 +18,7 @@ module.exports.deleteCardById = (req, res, next) => {
       if (card.owner._id.toString() !== req.user._id.toString()) {
         throw new ForbiddenError('Вы не можете удалить чужую карточку');
       }
-      return res.send(card);
+      Card.findByIdAndRemove(req.params.cardId).then((deletedCard) => res.send(deletedCard));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
