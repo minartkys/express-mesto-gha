@@ -14,7 +14,7 @@ module.exports.getUserMe = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (user) {
-        res.status(200).send(user);
+        res.status(200).send({ user });
       }
       return next(new NotFoundError('Пользователь с указанным _id не найден.'));
     })
@@ -22,14 +22,13 @@ module.exports.getUserMe = (req, res, next) => {
 };
 
 module.exports.getUserById = (req, res, next) => {
-  User.findById(req.params.userId)
+  const { id } = req.params;
+  User.findById(id)
     .then((user) => {
       if (user === null) {
         throw new NotFoundError('Пользователь по указанному _id не найден.');
       }
-      res.status(200).send({
-        data: user,
-      });
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
